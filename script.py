@@ -51,7 +51,7 @@ model_name = 'facebook/xglm-7.5B'
 model_token_limit = 3900
 
 model = gpt_model
-model= nn.DataParallel(model)
+model= torch.nn.DataParallel(model)
 model.to(device)
 
 print("CUDA MEM RESERVED MODEL")
