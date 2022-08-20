@@ -52,7 +52,7 @@ gpt_model = XGLMForCausalLM.from_pretrained("facebook/xglm-4.5B")
 tokenizer = XGLMTokenizer.from_pretrained("facebook/xglm-4.5B")
 
 model_name = 'facebook/xglm-4.5B'
-model_token_limit = 3900
+model_token_limit = 3000
 
 model = gpt_model
 
