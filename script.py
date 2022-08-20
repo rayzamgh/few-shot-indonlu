@@ -22,7 +22,7 @@ from transformers import GPT2LMHeadModel, set_seed
 from transformers import GPT2Tokenizer, GPTNeoModel, GPTNeoForCausalLM
 from transformers import BertForSequenceClassification, BertConfig, BertTokenizer
 
-from indobenchmark import IndoNLGTokenizer
+# from indobenchmark import IndoNLGTokenizer
 
 set_seed(23521005)
 
@@ -66,7 +66,7 @@ count_param(model)
 
 # CREATE DATASET!!
 
-from indobenchmark import IndoNLGTokenizer
+# from indobenchmark import IndoNLGTokenizer
 import torch
 import shutil
 import random
@@ -74,8 +74,6 @@ import numpy as np
 import pandas as pd
 from torch import optim
 from transformers import GPT2LMHeadModel
-
-from indobenchmark import IndoNLGTokenizer
 
 import pandas as pd
 import numpy as np
