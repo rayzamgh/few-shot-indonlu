@@ -4,18 +4,6 @@ remain = 12*60*60 - uptime
 
 print(remain)
 
-# !ln -sf /opt/bin/nvidia-smi /usr/bin/nvidia-smi
-# !pip install gputil
-# !pip install psutil
-# !pip install humanize
-# !git lfs install
-# !git clone https://huggingface.co/indobenchmark/indogpt
-# !pip install datasets
-# # !pip install git+https://github.com/huggingface/transformers.git
-# !pip install indobenchmark-toolkit
-# !pip install pip install tensorflow==2.5.0 
-# !pip install promptsource
-
 import tensorflow
 print(tensorflow.__version__)
 
