@@ -26,11 +26,7 @@ from transformers import BertForSequenceClassification, BertConfig, BertTokenize
 
 set_seed(23521005)
 
-cuda_string = "cuda:7"
-
-cuda7 = torch.device(cuda_string)
-
-device = torch.device(cuda_string if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("CUDA MEM RESERVED MODEL")
 print(torch.cuda.memory_reserved(0)/1e9)
 
@@ -46,16 +42,16 @@ from transformers import XGLMTokenizer, XGLMForCausalLM
 # tokenizer = GPT2Tokenizer.from_pretrained('EleutherAI/gpt-neo-2.7B')
 # gpt_model = GPTNeoForCausalLM.from_pretrained('EleutherAI/gpt-neo-1.3B')
 # tokenizer = GPT2Tokenizer.from_pretrained('EleutherAI/gpt-neo-1.3B')
-gpt_model = XGLMForCausalLM.from_pretrained("facebook/xglm-2.9B")
-tokenizer = XGLMTokenizer.from_pretrained("facebook/xglm-2.9B")
-# gpt_model = XGLMForCausalLM.from_pretrained("facebook/xglm-4.5B")
-# tokenizer = XGLMTokenizer.from_pretrained("facebook/xglm-4.5B")
+# gpt_model = XGLMForCausalLM.from_pretrained("facebook/xglm-2.9B")
+# tokenizer = XGLMTokenizer.from_pretrained("facebook/xglm-2.9B")
+gpt_model = XGLMForCausalLM.from_pretrained("facebook/xglm-7.5B")
+tokenizer = XGLMTokenizer.from_pretrained("facebook/xglm-7.5B")
 
-model_name = 'facebook/xglm-2.9B'
-model_token_limit = 1900
+model_name = 'facebook/xglm-7.5B'
+model_token_limit = 3900
 
 model = gpt_model
-
+model= nn.DataParallel(model)
 model.to(device)
 
 print("CUDA MEM RESERVED MODEL")
@@ -465,7 +461,7 @@ def cpu_past_to_gpu(cpu_past_key_value):
     gpu_ret_past_key_values = []
   
     for keyval_layer in cpu_past_key_value:
-      gpu_ret_past_key_values.append((keyval_layer[0].cuda(cuda7), keyval_layer[1].cuda(cuda7)))
+      gpu_ret_past_key_values.append((keyval_layer[0].cuda(), keyval_layer[1].cuda()))
 
     return tuple(gpu_ret_past_key_values)
 
@@ -527,7 +523,7 @@ def get_logprobs(model, tokenizer, prompt, past_key_values, k_value, cuda):
         past_key_values = cpu_past_to_gpu(past_key_values)
 
       if cuda:
-        input_ids_cuda = inputs["input_ids"].cuda(cuda7)
+        input_ids_cuda = inputs["input_ids"].cuda()
       else:
         input_ids_cuda = inputs["input_ids"]
 
@@ -574,7 +570,7 @@ def calculate_log_prob_global(model, tokenizer, prefix, targets,  k_past_context
                 break
 
         if cuda:
-            encoded_input = encoded_input.cuda(cuda7)
+            encoded_input = encoded_input.cuda()
 
         past_key_values = None
         next_context = None
@@ -639,7 +635,7 @@ def get_past_key_values(k, model, input_query, cuda, k_past_context, k_past_valu
         encoded_input_ids = tokenizer([input_query], return_tensors="pt")["input_ids"]
 
         if cuda:  
-            encoded_input_ids = encoded_input_ids.cuda(cuda7)
+            encoded_input_ids = encoded_input_ids.cuda()
 
         next_context, cpu_ret_past_key_values = predict_past(model, encoded_input_ids, cuda)
 
@@ -967,7 +963,7 @@ indoNLU_labels = {}
 indoNLU_data_classes = {}
 
 configs = {
-    "k_value_hard_coded" : [0, 1, 5, 10, 15, 20, 25, 30, 35, 40], 
+    "k_value_hard_coded" : [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80], 
     # "predict_class" :  normalize,
     "predict_class" :  calculate_log_prob_global, 
     "n_test_case" : 10,
