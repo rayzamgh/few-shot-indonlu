@@ -48,10 +48,10 @@ from transformers import XGLMTokenizer, XGLMForCausalLM
 # tokenizer = GPT2Tokenizer.from_pretrained('EleutherAI/gpt-neo-1.3B')
 # gpt_model = XGLMForCausalLM.from_pretrained("facebook/xglm-2.9B")
 # tokenizer = XGLMTokenizer.from_pretrained("facebook/xglm-2.9B")
-gpt_model = XGLMForCausalLM.from_pretrained("facebook/xglm-7.5B")
-tokenizer = XGLMTokenizer.from_pretrained("facebook/xglm-7.5B")
+gpt_model = XGLMForCausalLM.from_pretrained("facebook/xglm-4.5B")
+tokenizer = XGLMTokenizer.from_pretrained("facebook/xglm-4.5B")
 
-model_name = 'facebook/xglm-7.5B'
+model_name = 'facebook/xglm-4.5B'
 model_token_limit = 3900
 
 model = gpt_model
