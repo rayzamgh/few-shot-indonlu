@@ -9,6 +9,8 @@ print(tensorflow.__version__)
 
 import os, sys
 
+# pip install git+https://github.com/huggingface/transformers.git
+
 import tensorflow as tf
 import torch
 import shutil

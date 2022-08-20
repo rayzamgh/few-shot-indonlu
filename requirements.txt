@@ -1,8 +1,6 @@
-pip install gputil
-pip install psutil
-pip install humanize
-git lfs install
-pip install datasets
-pip install git+https://github.com/huggingface/transformers.git
-pip install indobenchmark-toolkit
-pip install pip install tensorflow==2.5.0 
+gputil
+psutil
+humanize
+datasets
+indobenchmark-toolkit
+tensorflow==2.5.0 
