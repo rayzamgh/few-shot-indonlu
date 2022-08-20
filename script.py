@@ -484,34 +484,36 @@ def normalize(x):
     return np.exp(x - logsumexp(x))
 
 def score_next(model, tokenizer, encoded, token, cuda, k_value, past_key_values=None, next_context=None, k_past_values=None):
+    with torch.inference_mode():
+        # print(encoded.size(), token.size())
 
-    if next_context is not None:
-        encoded = next_context
-    elif k_value != 0 :
-        past_key_values = cpu_past_to_gpu(k_past_values)
+        if next_context is not None:
+          encoded = next_context
+        elif k_value != 0 :
+          past_key_values = cpu_past_to_gpu(k_past_values)
 
-    outputs = model(encoded, past_key_values=past_key_values)
-    next_token_logits = outputs.logits
+        outputs = model(encoded, past_key_values=past_key_values)
+        next_token_logits = outputs.logits
 
-    def _log_softmax(x):
-        maxval = np.max(x)
-        logsum = np.log(np.sum(np.exp(x - maxval)))
-        return x - maxval - logsum
+        def _log_softmax(x):
+            maxval = np.max(x)
+            logsum = np.log(np.sum(np.exp(x - maxval)))
+            return x - maxval - logsum
 
-    next_token_logits = next_token_logits[:,-1].squeeze()
-    scores = _log_softmax(next_token_logits.cpu().detach().numpy())
+        next_token_logits = next_token_logits[:,-1].squeeze()
+        scores = _log_softmax(next_token_logits.cpu().detach().numpy())
 
-    # past_key_values 
-    ret_past_key_values = outputs.past_key_values
-    next_token = torch.argmax(outputs.logits[..., -1, :])
-    next_context = next_token.unsqueeze(0).unsqueeze(0)
+        # past_key_values 
+        ret_past_key_values = outputs.past_key_values
+        next_token = torch.argmax(outputs.logits[..., -1, :])
+        next_context = next_token.unsqueeze(0).unsqueeze(0)
 
-    del next_token_logits
-    del outputs
-    if cuda:
-        torch.cuda.empty_cache()
+        del next_token_logits
+        del outputs
+        if cuda:
+          torch.cuda.empty_cache()
 
-    return scores[int(token)], ret_past_key_values, next_context
+        return scores[int(token)], ret_past_key_values, next_context
 
 
 import numpy as np
@@ -521,12 +523,12 @@ def get_logprobs(model, tokenizer, prompt, past_key_values, k_value, cuda):
     inputs = tokenizer(prompt, return_tensors="pt")
     
     if k_value != 0 :
-    past_key_values = cpu_past_to_gpu(past_key_values)
+        past_key_values = cpu_past_to_gpu(past_key_values)
 
     if cuda:
-    input_ids_cuda = inputs["input_ids"].cuda(cuda7)
+        input_ids_cuda = inputs["input_ids"].cuda(cuda7)
     else:
-    input_ids_cuda = inputs["input_ids"]
+        input_ids_cuda = inputs["input_ids"]
 
     input_ids, output_ids = input_ids_cuda, input_ids_cuda[:, 1:]
     outputs = model(input_ids_cuda, past_key_values=past_key_values, labels=input_ids)
@@ -584,7 +586,7 @@ def calculate_log_prob_global(model, tokenizer, prefix, targets,  k_past_context
         del encoded_input
         del past_key_values
         if cuda:
-            torch.cuda.empty_cache()
+          torch.cuda.empty_cache()
 
     # normalize the negative log probability => convert it to softmax probability
     print("SCORES UNNORMALIZED")
