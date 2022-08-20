@@ -26,7 +26,7 @@ from transformers import BertForSequenceClassification, BertConfig, BertTokenize
 
 set_seed(23521005)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:7' if torch.cuda.is_available() else 'cpu')
 print("CUDA MEM RESERVED MODEL")
 print(torch.cuda.memory_reserved(0)/1e9)
 
@@ -51,6 +51,7 @@ model_name = 'facebook/xglm-7.5B'
 model_token_limit = 3900
 
 model = gpt_model
+
 model.to(device)
 
 print("CUDA MEM RESERVED MODEL")
