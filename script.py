@@ -25,8 +25,9 @@ from transformers import BertForSequenceClassification, BertConfig, BertTokenize
 # from indobenchmark import IndoNLGTokenizer
 
 set_seed(23521005)
+cuda7 = torch.device('cuda:7')
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:7' if torch.cuda.is_available() else 'cpu')
 print("CUDA MEM RESERVED MODEL")
 print(torch.cuda.memory_reserved(0)/1e9)
 
@@ -462,7 +463,7 @@ def cpu_past_to_gpu(cpu_past_key_value):
     gpu_ret_past_key_values = []
   
     for keyval_layer in cpu_past_key_value:
-      gpu_ret_past_key_values.append((keyval_layer[0].cuda(), keyval_layer[1].cuda()))
+      gpu_ret_past_key_values.append((keyval_layer[0].cuda(cuda7), keyval_layer[1].cuda(cuda7)))
 
     return tuple(gpu_ret_past_key_values)
 
@@ -524,7 +525,7 @@ def get_logprobs(model, tokenizer, prompt, past_key_values, k_value, cuda):
         past_key_values = cpu_past_to_gpu(past_key_values)
 
       if cuda:
-        input_ids_cuda = inputs["input_ids"].cuda()
+        input_ids_cuda = inputs["input_ids"].cuda(cuda7)
       else:
         input_ids_cuda = inputs["input_ids"]
 
@@ -571,7 +572,7 @@ def calculate_log_prob_global(model, tokenizer, prefix, targets,  k_past_context
                 break
 
         if cuda:
-            encoded_input = encoded_input.cuda()
+            encoded_input = encoded_input.cuda(cuda7)
 
         past_key_values = None
         next_context = None
@@ -636,7 +637,7 @@ def get_past_key_values(k, model, input_query, cuda, k_past_context, k_past_valu
         encoded_input_ids = tokenizer([input_query], return_tensors="pt")["input_ids"]
 
         if cuda:  
-            encoded_input_ids = encoded_input_ids.cuda()
+            encoded_input_ids = encoded_input_ids.cuda(cuda7)
 
         next_context, cpu_ret_past_key_values = predict_past(model, encoded_input_ids, cuda)
 
