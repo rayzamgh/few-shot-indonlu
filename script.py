@@ -965,7 +965,7 @@ indoNLU_labels = {}
 indoNLU_data_classes = {}
 
 configs = {
-    "k_value_hard_coded" : [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80], 
+    "k_value_hard_coded" : [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 80], 
     # "predict_class" :  normalize,
     "predict_class" :  calculate_log_prob_global, 
     "n_test_case" : 10,
